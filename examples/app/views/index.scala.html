@@ -1,0 +1,27 @@
+@(message: String)
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Play Sentry Examples</title>
+    </head>
+    <body>
+        @message
+
+        <hr>        
+
+        <p>
+            There are two statically generated users that you may login as using the links below. User 1 has statically granted permission to all endpoints that require authorization, while User 2 only has permission to view the endpoint with the "View" permission.
+        </p>
+
+        <a href="@controllers.routes.HomeController.index">Index</a> |
+        <a href="@controllers.routes.HomeController.login(1)">Login as User 1</a> |
+        <a href="@controllers.routes.HomeController.login(2)">Login as User 2</a> |
+        <a href="@controllers.routes.HomeController.login(3)">Failed Login</a> |
+        <a href="@controllers.routes.HomeController.logout()">Logout</a> |
+        <a href="@controllers.routes.HomeController.priv">Authenticated Users Only</a> |
+        <a href="@controllers.routes.HomeController.lockedView">Authorized Users Only (View)</a> |
+        <a href="@controllers.routes.HomeController.lockedList">Authorized Users Only (List)</a>
+
+    </body>
+</html>

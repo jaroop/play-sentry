@@ -1,0 +1,9 @@
+
+GET     /                           controllers.HomeController.index
+GET     /priv                       controllers.HomeController.priv
+GET     /locked-view                controllers.HomeController.lockedView
+GET     /locked-list                controllers.HomeController.lockedList
+GET     /login/:id                  controllers.HomeController.login(id: Long)
+GET     /logout                     controllers.HomeController.logout()
+
+GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
