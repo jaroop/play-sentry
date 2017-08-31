@@ -61,3 +61,5 @@ lazy val examples = (project in file("examples"))
     )
   )
   .dependsOn(core)
+
+lazy val root = (project in file(".")).settings(baseSettings).aggregate(core)
