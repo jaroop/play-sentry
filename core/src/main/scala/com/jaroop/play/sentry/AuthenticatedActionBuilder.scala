@@ -8,11 +8,9 @@ class AuthRequest[A, User](request: Request[A], val user: User) extends WrappedR
 
 class AuthenticatedActionBuilder[E <: Env] @Inject() (
     val parser: BodyParsers.Default,
-    val config: AuthConfig[E],
-    val idContainer: IdContainer[E#Id],
-    val tokenAccessor: TokenAccessor
-)(implicit val executionContext: ExecutionContext) extends ActionBuilder[AuthRequest[?, E#User], AnyContent]
-    with AsyncAuth[E] { self =>
+    config: AuthConfig[E],
+    auth: AsyncAuth[E]
+)(implicit val executionContext: ExecutionContext) extends ActionBuilder[AuthRequest[?, E#User], AnyContent] { self =>
 
     final def withAuthorization(authority: E#Authority): ActionBuilder[AuthRequest[?, E#User], AnyContent] = {
         new ActionBuilder[AuthRequest[?, E#User], AnyContent] {
@@ -23,7 +21,7 @@ class AuthenticatedActionBuilder[E <: Env] @Inject() (
 
             override def invokeBlock[A](request: Request[A], block: AuthRequest[A, E#User] => Future[Result]) = {
                 implicit val r = request
-                authorized(authority) flatMap {
+                auth.authorized(authority) flatMap {
                     case Right((user, resultUpdater)) => block(new AuthRequest(request, user)).map(resultUpdater)
                     case Left(result) => Future.successful(result)
                 }
@@ -34,7 +32,7 @@ class AuthenticatedActionBuilder[E <: Env] @Inject() (
     override def invokeBlock[A](request: Request[A], block: AuthRequest[A, E#User] => Future[Result]) = {
         implicit val r = request
 
-        restoreUser recover {
+        auth.restoreUser recover {
             case _ => None -> identity[Result] _
         } flatMap {
             case (Some(user), cookieUpdater) => block(new AuthRequest(request, user)).map(cookieUpdater)

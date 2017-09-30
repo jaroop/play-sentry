@@ -8,15 +8,12 @@ class OptionalAuthRequest[A, User](request: Request[A], val user: Option[User]) 
 
 class OptionalAuthenticatedActionBuilder[E <: Env] @Inject() (
     val parser: BodyParsers.Default,
-    val config: AuthConfig[E],
-    val idContainer: IdContainer[E#Id],
-    val tokenAccessor: TokenAccessor
-)(implicit val executionContext: ExecutionContext) extends ActionBuilder[OptionalAuthRequest[?, E#User], AnyContent]
-    with AsyncAuth[E] {
+    auth: AsyncAuth[E]
+)(implicit val executionContext: ExecutionContext) extends ActionBuilder[OptionalAuthRequest[?, E#User], AnyContent] {
 
     override def invokeBlock[A](request: Request[A], block: OptionalAuthRequest[A, E#User] => Future[Result]) = {
         implicit val r = request
-        val maybeUserFuture = restoreUser.recover { case _ => None -> identity[Result] _ }
+        val maybeUserFuture = auth.restoreUser.recover { case _ => None -> identity[Result] _ }
         maybeUserFuture.flatMap { case (maybeUser, cookieUpdater) =>
             block(new OptionalAuthRequest(request, maybeUser)).map(cookieUpdater)
         }
