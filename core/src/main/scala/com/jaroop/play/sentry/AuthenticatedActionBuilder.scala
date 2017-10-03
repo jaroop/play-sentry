@@ -19,7 +19,7 @@ class AuthenticatedActionBuilder[E <: Env] @Inject() (
             override protected def composeParser[A](bodyParser: BodyParser[A]): BodyParser[A] = self.composeParser(bodyParser)
             override protected def composeAction[A](action: Action[A]): Action[A] = self.composeAction(action)
 
-            override def invokeBlock[A](request: Request[A], block: AuthRequest[A, E#User] => Future[Result]) = {
+            override def invokeBlock[A](request: Request[A], block: AuthRequest[A, E#User] => Future[Result]): Future[Result] = {
                 implicit val r = request
                 auth.authorized(authority) flatMap {
                     case Right((user, resultUpdater)) => block(new AuthRequest(request, user)).map(resultUpdater)
@@ -29,7 +29,7 @@ class AuthenticatedActionBuilder[E <: Env] @Inject() (
         }
     }
 
-    override def invokeBlock[A](request: Request[A], block: AuthRequest[A, E#User] => Future[Result]) = {
+    override def invokeBlock[A](request: Request[A], block: AuthRequest[A, E#User] => Future[Result]): Future[Result] = {
         implicit val r = request
 
         auth.restoreUser recover {
