@@ -26,7 +26,6 @@ def scalacOptionsVersion(scalaVersion: String) = {
     "-explaintypes",                     // Explain type errors in more detail.
     "-feature",                          // Emit warning and location for usages of features that should be imported explicitly.
     "-unchecked",                        // Enable additional warnings where generated code depends on assumptions.
-    "-Ywarn-dead-code",                  // Warn when dead code is identified.
     "-Ywarn-inaccessible",               // Warn about inaccessible types in method signatures.
     "-Ywarn-infer-any",                  // Warn when a type argument is inferred to be `Any`.
     "-Ywarn-nullary-override",           // Warn when non-nullary `def f()' overrides nullary `def f'.
@@ -44,10 +43,14 @@ def scalacOptionsVersion(scalaVersion: String) = {
 
 lazy val core = (project in file("core"))
   .settings(
-    baseSettings,
-    libraryDependencies += "com.typesafe.play" %% "play" % playVersion % "provided",
-    libraryDependencies += "com.typesafe.play" %% "play-cache" % playVersion % "provided",
     name := appName,
+    baseSettings,
+    libraryDependencies ++= Seq(
+      "com.typesafe.play" %% "play" % playVersion % "provided",
+      "com.typesafe.play" %% "play-cache" % playVersion % "provided",
+      "org.specs2" %% "specs2-core" % "3.9.5" % "test",
+      "org.specs2" %% "specs2-mock" % "3.9.5" % "test"
+    ),
     addCompilerPlugin("org.spire-math" % "kind-projector" % "0.9.4" cross CrossVersion.binary)
   )
 
@@ -61,3 +64,5 @@ lazy val examples = (project in file("examples"))
     )
   )
   .dependsOn(core)
+
+lazy val root = (project in file(".")).settings(baseSettings).aggregate(core)
