@@ -1,15 +1,14 @@
 package com.jaroop.play.sentry
 
+import javax.inject.Inject
 import play.api.mvc._
 import scala.concurrent.{ExecutionContext, Future}
 
-trait AsyncAuth[E <: Env] {
-
-    def config: AuthConfig[E]
-
-    def idContainer: IdContainer[E#Id]
-
-    def tokenAccessor: TokenAccessor
+class AsyncAuth[E <: Env] @Inject() (
+    config: AuthConfig[E],
+    idContainer: IdContainer[E#Id],
+    tokenAccessor: TokenAccessor
+) {
 
     def authorized(authority: E#Authority)
         (implicit request: RequestHeader, ec: ExecutionContext): Future[Either[Result, (E#User, ResultUpdater)]] = {

@@ -51,6 +51,8 @@ lazy val core = (project in file("core"))
       "org.specs2" %% "specs2-core" % "3.9.5" % "test",
       "org.specs2" %% "specs2-mock" % "3.9.5" % "test"
     ),
+    fork in Test := true,
+    parallelExecution in Test := false,
     addCompilerPlugin("org.spire-math" % "kind-projector" % "0.9.4" cross CrossVersion.binary)
   )
 
