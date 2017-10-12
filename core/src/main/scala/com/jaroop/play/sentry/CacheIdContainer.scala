@@ -9,7 +9,10 @@ import scala.concurrent.duration.Duration
 import scala.reflect.ClassTag
 import scala.util.control.NonFatal
 
-class CacheIdContainer[Id : ClassTag] @Inject() (cache: AsyncCacheApi) extends IdContainer[Id] {
+class CacheIdContainer[Id : ClassTag] @Inject() (
+    cache: AsyncCacheApi,
+    tokenGenerator: TokenGenerator
+) extends IdContainer[Id] {
 
     private val tokenSuffix = ":token"
     private val userIdSuffix = ":userId"
@@ -24,8 +27,7 @@ class CacheIdContainer[Id : ClassTag] @Inject() (cache: AsyncCacheApi) extends I
     }
 
     private final def generate(implicit ec: ExecutionContext): Future[AuthenticityToken] = {
-        val table = "abcdefghijklmnopqrstuvwxyz1234567890_.~*'()"
-        val token = Iterator.continually(random.nextInt(table.size)).map(table).take(64).mkString
+        val token = tokenGenerator.generate
         get(token).filter(_.isEmpty).map(_ => token).recoverWith {
             case NonFatal(_) => generate
         }

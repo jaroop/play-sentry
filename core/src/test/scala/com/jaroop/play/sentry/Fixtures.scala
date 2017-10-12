@@ -20,3 +20,5 @@ sealed trait Role
 case object Admin extends Role
 case object Manager extends Role
 case object Employee extends Role
+
+case class StaticTokenGenerator(override val generate: AuthenticityToken) extends TokenGenerator
