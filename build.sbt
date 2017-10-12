@@ -48,6 +48,7 @@ lazy val core = (project in file("core"))
     libraryDependencies ++= Seq(
       "com.typesafe.play" %% "play" % playVersion % "provided",
       "com.typesafe.play" %% "play-cache" % playVersion % "provided",
+      "com.typesafe.play" %% "play-test" % playVersion % "test",
       "org.specs2" %% "specs2-core" % "3.9.5" % "test",
       "org.specs2" %% "specs2-mock" % "3.9.5" % "test"
     ),
