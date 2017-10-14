@@ -17,7 +17,7 @@ class LogoutSpec(implicit ee: ExecutionEnv) extends Specification with Mockito {
         "destroy a users's session both the id container and token accessor" in {
             implicit val request = mock[RequestHeader]
             val token = "abcdef"
-            val originalResult = Results.Continue
+            val originalResult = Results.Accepted
             val expectedResult = Results.Ok
             val config = mock[AuthConfig[TestEnv]]
             val idContainer = mock[IdContainer[Long]]

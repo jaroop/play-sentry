@@ -2,7 +2,7 @@ package com.jaroop.play.sentry
 
 import java.security.SecureRandom
 import javax.inject.Inject
-import play.api.cache.AsyncCacheApi
+import play.api.cache.CacheApi
 import scala.util.Random
 import scala.concurrent.{ ExecutionContext, Future }
 import scala.concurrent.duration.Duration
@@ -65,7 +65,7 @@ class CacheIdContainer[Id : ClassTag] @Inject() (
 
     /** Removes an [[AuthenticityToken]] from the cache. */
     private def unsetToken(token: AuthenticityToken)(implicit ec: ExecutionContext): Future[Unit] = {
-        cache.remove(token + tokenSuffix).map(_ => ())
+        cache.remove(token + tokenSuffix)
     }
 
     /** Convenience method for removing an [[AuthenticityToken]] if the `Option` has a value, but is successful if empty. */
@@ -74,7 +74,7 @@ class CacheIdContainer[Id : ClassTag] @Inject() (
 
     /** Removes a user ID from the cache. */
     private def unsetUserId(userId: Id)(implicit ec: ExecutionContext): Future[Unit] =
-        cache.remove(userId.toString + userIdSuffix).map(_ => ())
+        cache.remove(userId.toString + userIdSuffix)
 
     /** Convenience method for removing a user ID if the `Option` has a value, but is successful if empty. */
     private def unsetUserId(userId: Option[Id])(implicit ec: ExecutionContext): Future[Unit] =

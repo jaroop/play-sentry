@@ -18,7 +18,7 @@ class HomeController @Inject() (
     loginService: Login[EnvImpl],
     logoutService: Logout[EnvImpl],
     us: UserService
-)(implicit val ec: ExecutionContext) extends InjectedController {
+)(implicit val ec: ExecutionContext) extends Controller {
 
     def index = optionalAuthAction { implicit request =>
         val msg = request.user.map(user => s"You are logged in as: $user").getOrElse("You are not logged in.")

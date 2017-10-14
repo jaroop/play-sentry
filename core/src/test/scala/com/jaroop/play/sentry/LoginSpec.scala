@@ -18,7 +18,7 @@ class LoginSpec(implicit ee: ExecutionEnv) extends Specification with Mockito {
             implicit val request = mock[RequestHeader]
             val token = "abcdef"
             val userId = 1L
-            val originalResult = Results.Continue
+            val originalResult = Results.Accepted
             val expectedResult = Results.Ok
             val config = mock[AuthConfig[TestEnv]]
             config.sessionTimeout.returns(1.hour)
