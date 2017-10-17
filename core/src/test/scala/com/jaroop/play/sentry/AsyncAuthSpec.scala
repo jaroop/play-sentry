@@ -5,6 +5,7 @@ import org.mockito.Matchers._
 import org.specs2.concurrent._
 import org.specs2.mock._
 import org.specs2.mutable._
+import play.api.Environment
 import play.api.mvc.{ RequestHeader, Result, Results }
 import scala.concurrent.{ ExecutionContext, Future }
 import scala.concurrent.duration._
@@ -15,7 +16,7 @@ class AsyncAuthSpec(implicit ee: ExecutionEnv) extends Specification with Mockit
         config: AuthConfig[TestEnv],
         idContainer: IdContainer[Long],
         tokenAccessor: TokenAccessor
-    ) extends AsyncAuth[TestEnv](config, idContainer, tokenAccessor) {
+    ) extends AsyncAuth[TestEnv](config, idContainer, tokenAccessor, mock[Environment]) {
         override def restoreUser(implicit request: RequestHeader, ec: ExecutionContext): Future[(Option[User], ResultUpdater)] =
             Future.successful((Option(User.test), identity _))
     }
@@ -27,7 +28,7 @@ class AsyncAuthSpec(implicit ee: ExecutionEnv) extends Specification with Mockit
             val config = mock[AuthConfig[TestEnv]]
             val idContainer = mock[IdContainer[Long]]
             val tokenAccessor = mock[TokenAccessor]
-            val auth = new AsyncAuth[TestEnv](config, idContainer, tokenAccessor)
+            val auth = new AsyncAuth[TestEnv](config, idContainer, tokenAccessor, mock[Environment])
             implicit val request = mock[RequestHeader]
             val token = "secrettoken"
             val userId = 1L
@@ -45,7 +46,7 @@ class AsyncAuthSpec(implicit ee: ExecutionEnv) extends Specification with Mockit
             val config = mock[AuthConfig[TestEnv]]
             val idContainer = mock[IdContainer[Long]]
             val tokenAccessor = mock[TokenAccessor]
-            val auth = new AsyncAuth[TestEnv](config, idContainer, tokenAccessor)
+            val auth = new AsyncAuth[TestEnv](config, idContainer, tokenAccessor, mock[Environment])
             implicit val request = mock[RequestHeader]
             val token = "secrettoken"
             val userId = 1L
@@ -63,7 +64,7 @@ class AsyncAuthSpec(implicit ee: ExecutionEnv) extends Specification with Mockit
             val config = mock[AuthConfig[TestEnv]]
             val idContainer = mock[IdContainer[Long]]
             val tokenAccessor = mock[TokenAccessor]
-            val auth = new AsyncAuth[TestEnv](config, idContainer, tokenAccessor)
+            val auth = new AsyncAuth[TestEnv](config, idContainer, tokenAccessor, mock[Environment])
             implicit val request = mock[RequestHeader]
             val token = "secrettoken"
             val userId = 1L
@@ -81,7 +82,7 @@ class AsyncAuthSpec(implicit ee: ExecutionEnv) extends Specification with Mockit
             val config = mock[AuthConfig[TestEnv]]
             val idContainer = mock[IdContainer[Long]]
             val tokenAccessor = mock[TokenAccessor]
-            val auth = new AsyncAuth[TestEnv](config, idContainer, tokenAccessor)
+            val auth = new AsyncAuth[TestEnv](config, idContainer, tokenAccessor, mock[Environment])
             implicit val request = mock[RequestHeader]
             val token = "secrettoken"
             val userId = 1L
@@ -99,7 +100,7 @@ class AsyncAuthSpec(implicit ee: ExecutionEnv) extends Specification with Mockit
             val config = mock[AuthConfig[TestEnv]]
             val idContainer = mock[IdContainer[Long]]
             val tokenAccessor = mock[TokenAccessor]
-            val auth = new AsyncAuth[TestEnv](config, idContainer, tokenAccessor)
+            val auth = new AsyncAuth[TestEnv](config, idContainer, tokenAccessor, mock[Environment])
             implicit val request = mock[RequestHeader]
             val token = "secrettoken"
             val userId = 1L
@@ -117,7 +118,7 @@ class AsyncAuthSpec(implicit ee: ExecutionEnv) extends Specification with Mockit
             val config = mock[AuthConfig[TestEnv]]
             val idContainer = mock[IdContainer[Long]]
             val tokenAccessor = mock[TokenAccessor]
-            val auth = new AsyncAuth[TestEnv](config, idContainer, tokenAccessor)
+            val auth = new AsyncAuth[TestEnv](config, idContainer, tokenAccessor, mock[Environment])
             implicit val request = mock[RequestHeader]
             val token = "secrettoken"
             val userId = 1L
@@ -135,7 +136,7 @@ class AsyncAuthSpec(implicit ee: ExecutionEnv) extends Specification with Mockit
             val config = mock[AuthConfig[TestEnv]]
             val idContainer = mock[IdContainer[Long]]
             val tokenAccessor = mock[TokenAccessor]
-            val auth = new AsyncAuth[TestEnv](config, idContainer, tokenAccessor)
+            val auth = new AsyncAuth[TestEnv](config, idContainer, tokenAccessor, mock[Environment])
             implicit val request = mock[RequestHeader]
             val token = "secrettoken"
             val userId = 1L
@@ -195,7 +196,7 @@ class AsyncAuthSpec(implicit ee: ExecutionEnv) extends Specification with Mockit
             val idContainer = mock[IdContainer[Long]]
             val tokenAccessor = mock[TokenAccessor]
 
-            val auth = new AsyncAuth[TestEnv](config, idContainer, tokenAccessor) {
+            val auth = new AsyncAuth[TestEnv](config, idContainer, tokenAccessor, mock[Environment]) {
                 override def restoreUser(implicit request: RequestHeader, ec: ExecutionContext): Future[(Option[User], ResultUpdater)] =
                     Future.successful((Option.empty[User], identity _))
             }
@@ -212,7 +213,7 @@ class AsyncAuthSpec(implicit ee: ExecutionEnv) extends Specification with Mockit
             val config = mock[AuthConfig[TestEnv]]
             val idContainer = mock[IdContainer[Long]]
             val tokenAccessor = mock[TokenAccessor]
-            val auth = new AsyncAuth[TestEnv](config, idContainer, tokenAccessor) {
+            val auth = new AsyncAuth[TestEnv](config, idContainer, tokenAccessor, mock[Environment]) {
                 override def restoreUser(implicit request: RequestHeader, ec: ExecutionContext): Future[(Option[User], ResultUpdater)] =
                     Future.failed(new Exception)
             }

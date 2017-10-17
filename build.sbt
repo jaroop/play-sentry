@@ -2,6 +2,7 @@
 val appName = "play-sentry"
 
 val playVersion = play.core.PlayVersion.current
+val specsVersion = "3.9.5"
 
 lazy val baseSettings = Seq(
   version := "0.9.0-SNAPSHOT",
@@ -15,7 +16,9 @@ lazy val baseSettings = Seq(
   scalacOptions ++= scalacOptionsVersion(scalaVersion.value),
   publishMavenStyle := true,
   publishArtifact in Test := false,
-  pomIncludeRepository := { _: MavenRepository => false }
+  pomIncludeRepository := { _: MavenRepository => false },
+  fork in Test := true,
+  parallelExecution in Test := false
 )
 
 def scalacOptionsVersion(scalaVersion: String) = {
@@ -42,13 +45,27 @@ lazy val core = (project in file("core"))
       "com.typesafe.play" %% "play" % playVersion % "provided",
       "com.typesafe.play" %% "play-cache" % playVersion % "provided",
       "com.typesafe.play" %% "play-test" % playVersion % "test",
-      "org.specs2" %% "specs2-core" % "3.9.5" % "test",
-      "org.specs2" %% "specs2-mock" % "3.9.5" % "test"
+      "org.specs2" %% "specs2-core" % specsVersion % "test",
+      "org.specs2" %% "specs2-mock" % specsVersion % "test"
     ),
-    fork in Test := true,
-    parallelExecution in Test := false,
     addCompilerPlugin("org.spire-math" % "kind-projector" % "0.9.4" cross CrossVersion.binary)
   )
+
+lazy val sentryTest = (project in file("sentry-test"))
+  .settings(
+    name := appName + "-test",
+    baseSettings,
+    libraryDependencies ++= Seq(
+      "com.typesafe.play" %% "play" % playVersion % "provided",
+      "com.typesafe.play" %% "play-test" % playVersion % "provided",
+      "com.typesafe.play" %% "play-specs2" % playVersion % "test",
+      cache % "test",
+      "org.specs2" %% "specs2-core" % specsVersion % "test",
+      "org.specs2" %% "specs2-mock" % specsVersion % "test"
+    ),
+    addCompilerPlugin("org.spire-math" % "kind-projector" % "0.9.4" cross CrossVersion.binary)
+  ).dependsOn(core)
+
 
 lazy val examples = (project in file("examples"))
   .enablePlugins(PlayScala)
@@ -60,4 +77,4 @@ lazy val examples = (project in file("examples"))
   )
   .dependsOn(core)
 
-lazy val root = (project in file(".")).settings(baseSettings).aggregate(core)
+lazy val root = (project in file(".")).settings(baseSettings).aggregate(core, sentryTest)
