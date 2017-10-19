@@ -4,17 +4,31 @@ import scala.util.control.Exception._
 import scala.concurrent.{ ExecutionContext, Future }
 import scala.concurrent.duration.Duration
 
+/**
+ *  Provides a stateless implementation of [[IdContainer]], where the session is meant to be stored in cookies only. This means
+ *  that the server has no way of invalidating an individual user session, and the only way to do so would be to change the
+ *  secret key of the application to invalidate ''all'' signed tokens.
+ *
+ *  The [[AuthenticityToken]] in this case is just the user ID, so it is required that the `Id` type has an available
+ *  implementation of the [[ToString]] and [[FromString]] type classes. [[scala.Int]], [[scala.Long]], and [[java.lang.String]]
+ *  are supported by default to cover most use-cases.
+ *
+ *  @tparam A The type of user ID that will be stored in the session.
+ */
 class TransparentIdContainer[A : ToString : FromString] extends IdContainer[A] {
 
+    /** @inheritdoc */
     def startNewSession(userId: A, timeout: Duration)(implicit ec: ExecutionContext): Future[AuthenticityToken] =
         Future.successful(implicitly[ToString[A]].apply(userId))
 
+    /** Does nothing, as the session is not stored server-side. */
     def remove(token: AuthenticityToken)(implicit ec: ExecutionContext): Future[Unit] = Future.successful(())
 
+    /** @inheritdoc */
     def get(token: AuthenticityToken)(implicit ec: ExecutionContext): Future[Option[A]] =
         Future.successful(implicitly[FromString[A]].apply(token))
 
-    // Cookie Id Container does not support timeout.
+    /** Does nothing, as the session is not stored server-side. */
     def prolongTimeout(token: AuthenticityToken, timeout: Duration)(implicit ec: ExecutionContext): Future[Unit] =
         Future.successful(())
 
