@@ -35,6 +35,7 @@ Add the following to your `build.sbt`:
 
 ```
 libraryDependencies += "com.jaroop" %% "play-sentry" % "1.0.0"
+libraryDependencies += "com.jaroop" %% "play-sentry-test" % "1.0.0" % "test"
 ```
 
 ## Setup
@@ -259,6 +260,52 @@ class Appplication @Inject() (
         logout.gotoLogoutSucceeded()
     }
     
+}
+```
+
+## Testing
+
+Play Sentry comes with a small testing library to help you test your controllers that rely on Sentry action builders.
+
+First, there is the preferred way in which you can use `MockAuthenticationActionBuilder` or `MockOptionalAuthenticatedActionBuilder`. In both cases, you provide a user (or optional user) that the action builder will return statically. That is, both of these mock action builders will always authenticate and authorize the user, and `request.user` will always be the value you've provided. For example, let's say we want to test the `index` method of this controller:
+
+```
+@Singleton
+class HomeController @Inject() (
+    authenticatedAction: AuthenticatedActionBuilder[EnvImpl]
+)(implicit val ec: ExecutionContext) extends InjectedController {
+
+    def secretPage = authenticatedAction { implicit request =>
+        Ok(views.html.index(s"Success! You are logged in as ${request.user}"))
+    }
+}
+
+```
+
+In order to test this controller, we need to create an instance of `HomeController` that mocks out `AuthenticatedActionBuilder`. We can do so like this (using specs2):
+
+```
+import com.jaroop.play.sentry.test._
+
+"show the correct message" in {
+    val user = ... // The user that should be logged-in
+    val builder = MockAuthenticatedActionBuilder(user)
+    val controller = new HomeController(builder)
+    val request = FakeRequest()
+    val result = controller.secretPage(request)
+    contentAsString(result) must contain(...)
+}
+```
+
+There is also a method included in the `test` package that is very similar to `withLoggedIn` from play2-auth. You can use it in cases where you want a certain request to come from a particular logged-in user, and you want to test your controller method through the router (note, like other parts of the library, this method only works with Guice). We can write the same test from above as follows:
+
+```
+import com.jaroop.play.sentry.test._
+
+"show the correct message" in new WithApplication {
+    val request = FakeRequest(GET, "/secret").withLoggedIn[EnvImpl](1L) // specify your Env type and the logged-in user's ID
+    val Some(result) = route(app, request)
+    contentAsString(result) must contain(...)
 }
 ```
 
