@@ -80,9 +80,12 @@ lazy val examples = (project in file("examples"))
     baseSettings,
     libraryDependencies ++= Seq(
       ehcache,
-      guice
+      guice,
+      "com.typesafe.play" %% "play-specs2" % playVersion % "test",
+      "org.specs2" %% "specs2-core" % specsVersion % "test",
+      "org.specs2" %% "specs2-mock" % specsVersion % "test"
     )
   )
-  .dependsOn(core)
+  .dependsOn(core, sentryTest)
 
 lazy val root = (project in file(".")).settings(baseSettings).aggregate(core, sentryTest)
