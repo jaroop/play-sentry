@@ -60,8 +60,8 @@ lazy val sentryTest = (project in file("sentry-test"))
       "com.typesafe.play" %% "play-test" % playVersion % "provided",
       "com.typesafe.play" %% "play-specs2" % playVersion % "test",
       cache % "test",
-      "org.specs2" %% "specs2-core" % specsVersion % "test",
-      "org.specs2" %% "specs2-mock" % specsVersion % "test"
+      "org.specs2" %% "specs2-core" % "3.6.6" % "test",
+      "org.specs2" %% "specs2-mock" % "3.6.6" % "test"
     ),
     addCompilerPlugin("org.spire-math" % "kind-projector" % "0.9.4" cross CrossVersion.binary)
   ).dependsOn(core)
@@ -72,9 +72,13 @@ lazy val examples = (project in file("examples"))
   .settings(
     baseSettings,
     libraryDependencies ++= Seq(
-      cache
+      cache,
+      "com.typesafe.play" %% "play-test" % playVersion % "provided",
+      "com.typesafe.play" %% "play-specs2" % playVersion % "test",
+      "org.specs2" %% "specs2-core" % "3.6.6" % "test",
+      "org.specs2" %% "specs2-mock" % "3.6.6" % "test"
     )
   )
-  .dependsOn(core)
+  .dependsOn(core, sentryTest)
 
 lazy val root = (project in file(".")).settings(baseSettings).aggregate(core, sentryTest)
