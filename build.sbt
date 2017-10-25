@@ -4,9 +4,8 @@ val appName = "play-sentry"
 val playVersion = play.core.PlayVersion.current
 
 lazy val baseSettings = Seq(
-  version := "1.0.0-SNAPSHOT",
-  scalaVersion := "2.12.3",
-  crossScalaVersions := Seq("2.11.11", "2.12.3"),
+  version := "0.9.0-SNAPSHOT",
+  scalaVersion := "2.11.11",
   organization := "com.jaroop",
   resolvers ++= Seq(
     Resolver.typesafeRepo("releases"),
@@ -32,13 +31,7 @@ def scalacOptionsVersion(scalaVersion: String) = {
     "-Ywarn-nullary-unit",               // Warn when nullary methods return Unit.
     "-Ywarn-numeric-widen",              // Warn when numerics are widened.
     "-Ywarn-value-discard"               // Warn when non-Unit expression results are unused.
-  ) ++ (CrossVersion.partialVersion(scalaVersion) match {
-    case Some((2, 12)) => Seq(
-      "-Xlint:_,-unused", // Enable lint warnings except for unused imports, parameters, etc.
-      "-Ywarn-extra-implicit" // Warn when more than one implicit parameter section is defined.
-    )
-    case _ => Nil
-  })
+  )
 }
 
 lazy val core = (project in file("core"))
@@ -62,8 +55,7 @@ lazy val examples = (project in file("examples"))
   .settings(
     baseSettings,
     libraryDependencies ++= Seq(
-      ehcache,
-      guice
+      cache
     )
   )
   .dependsOn(core)

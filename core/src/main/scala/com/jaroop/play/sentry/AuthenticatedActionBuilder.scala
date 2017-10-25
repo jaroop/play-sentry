@@ -39,10 +39,9 @@ class AuthRequest[A, User](request: Request[A], val user: User) extends WrappedR
  *  @tparam E The environment type of your application.
  */
 class AuthenticatedActionBuilder[E <: Env] @Inject() (
-    val parser: BodyParsers.Default,
     config: AuthConfig[E],
     auth: AsyncAuth[E]
-)(implicit val executionContext: ExecutionContext) extends ActionBuilder[AuthRequest[?, E#User], AnyContent] { self =>
+)(override implicit val executionContext: ExecutionContext) extends ActionBuilder[AuthRequest[?, E#User]] { self =>
 
     /**
      *  Creates an `ActionBuilder` with enforced authorization. First, it verifies that the user is authenticated, then it checks
@@ -53,9 +52,8 @@ class AuthenticatedActionBuilder[E <: Env] @Inject() (
      *          for the given authority key. If the user is not authorized, then they receive the `Result` as configured
      *          by the available [[AuthConfig]].
      */
-    final def withAuthorization(authority: E#Authority): ActionBuilder[AuthRequest[?, E#User], AnyContent] = {
-        new ActionBuilder[AuthRequest[?, E#User], AnyContent] {
-            override def parser = self.parser
+    final def withAuthorization(authority: E#Authority): ActionBuilder[AuthRequest[?, E#User]] = {
+        new ActionBuilder[AuthRequest[?, E#User]] {
             override protected implicit def executionContext = self.executionContext
             override protected def composeParser[A](bodyParser: BodyParser[A]): BodyParser[A] = self.composeParser(bodyParser)
             override protected def composeAction[A](action: Action[A]): Action[A] = self.composeAction(action)

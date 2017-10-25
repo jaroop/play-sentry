@@ -21,7 +21,6 @@ class OptionalAuthenticatedActionBuilderSpec(implicit ee: ExecutionEnv) extends 
         "invoke the block with a user in the request if the user is authenticated" in {
             val auth = mock[AsyncAuth[TestEnv]]
             val action = new OptionalAuthenticatedActionBuilder[TestEnv](
-                mock[BodyParsers.Default],
                 auth
             )
             auth.restoreUser(anyObject, anyObject).returns(Future.successful((Option(User.test), identity _)))
@@ -32,7 +31,6 @@ class OptionalAuthenticatedActionBuilderSpec(implicit ee: ExecutionEnv) extends 
         "invoke the block without a user if the user is not authenticated" in {
             val auth = mock[AsyncAuth[TestEnv]]
             val action = new OptionalAuthenticatedActionBuilder[TestEnv](
-                mock[BodyParsers.Default],
                 auth
             )
             val request = mock[Request[AnyContent]]
@@ -44,7 +42,6 @@ class OptionalAuthenticatedActionBuilderSpec(implicit ee: ExecutionEnv) extends 
         "invoke the block without a user if restoring the user failed for some other reason" in {
             val auth = mock[AsyncAuth[TestEnv]]
             val action = new OptionalAuthenticatedActionBuilder[TestEnv](
-                mock[BodyParsers.Default],
                 auth
             )
             val request = mock[Request[AnyContent]]

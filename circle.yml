@@ -22,4 +22,3 @@ dependencies:
 test:
     override:
         - sbt ++2.11.11 test
-        - sbt ++2.12.3 test

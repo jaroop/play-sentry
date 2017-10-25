@@ -5,7 +5,6 @@ import org.mockito.Matchers._
 import org.specs2.concurrent._
 import org.specs2.mock._
 import org.specs2.mutable._
-import play.api.cache.AsyncCacheApi
 import play.api.mvc._
 import scala.reflect._
 import scala.concurrent.Future
@@ -18,9 +17,9 @@ class CacheIdContainerSpec(implicit ee: ExecutionEnv) extends Specification with
         tag("startNewSession")
         "start a new session, returning an authenticity token, ensuring that the correct values are cached" in {
             val cache = mock[AsyncCacheApi]
-            cache.set(anyObject, anyObject, anyObject).returns(Future.successful(akka.Done))
+            cache.set(anyObject, anyObject, anyObject).returns(Future.successful(()))
             cache.get[Long](anyObject)(anyObject).returns(Future.successful(Option.empty[Long]))
-            cache.remove(anyObject).returns(Future.successful(akka.Done))
+            cache.remove(anyObject).returns(Future.successful(()))
             val idContainer = new CacheIdContainer[Long](cache, StaticTokenGenerator("abcdef"))
             idContainer.startNewSession(1L, 1.hour) must equalTo("abcdef").await
             there was one(cache).get[String]("1:userId") andThen
@@ -36,10 +35,10 @@ class CacheIdContainerSpec(implicit ee: ExecutionEnv) extends Specification with
             // This is essentially the same as the above test, but because the is a token already associated with the userId 1 in
             // the cache, there is an extra step where it is removed.
             val cache = mock[AsyncCacheApi]
-            cache.set(anyObject, anyObject, anyObject).returns(Future.successful(akka.Done))
+            cache.set(anyObject, anyObject, anyObject).returns(Future.successful(()))
             cache.get("1:userId")(classTag[String]).returns(Future.successful(Option("abcdef")))
             cache.get("abcdef:token")(classTag[Long]).returns(Future.successful(Option.empty[Long]))
-            cache.remove(anyObject).returns(Future.successful(akka.Done))
+            cache.remove(anyObject).returns(Future.successful(()))
             val idContainer = new CacheIdContainer[Long](cache, StaticTokenGenerator("abcdef"))
             idContainer.startNewSession(1L, 1.hour) must equalTo("abcdef").await
             there was one(cache).get[String]("1:userId") andThen
@@ -54,10 +53,10 @@ class CacheIdContainerSpec(implicit ee: ExecutionEnv) extends Specification with
         tag("startNewSession")
         "fail to start a new session if there is a cache failure" in {
             val cache = mock[AsyncCacheApi]
-            cache.set(anyObject, anyObject, anyObject).returns(Future.successful(akka.Done))
+            cache.set(anyObject, anyObject, anyObject).returns(Future.successful(()))
             cache.get("1:userId")(classTag[String]).returns(Future.failed(new Exception))
             cache.get("abcdef:token")(classTag[Long]).returns(Future.successful(Option.empty[Long]))
-            cache.remove(anyObject).returns(Future.successful(akka.Done))
+            cache.remove(anyObject).returns(Future.successful(()))
             val idContainer = new CacheIdContainer[Long](cache, StaticTokenGenerator("abcdef"))
             idContainer.startNewSession(1L, 1.hour) must throwA[Exception].await
         }
@@ -90,7 +89,7 @@ class CacheIdContainerSpec(implicit ee: ExecutionEnv) extends Specification with
         "successfully destroy a user's session" in {
             val cache = mock[AsyncCacheApi]
             cache.get("abcdef:token")(classTag[Long]).returns(Future.successful(Option(1L)))
-            cache.remove(anyObject).returns(Future.successful(akka.Done))
+            cache.remove(anyObject).returns(Future.successful(()))
             val idContainer = new CacheIdContainer[Long](cache, StaticTokenGenerator("abcdef"))
             idContainer.remove("abcdef") must equalTo(()).await
             there was one(cache).remove("1:userId") andThen
@@ -101,7 +100,7 @@ class CacheIdContainerSpec(implicit ee: ExecutionEnv) extends Specification with
         "destroy a user's session, even if the userId isn't kept in the cache" in {
             val cache = mock[AsyncCacheApi]
             cache.get("abcdef:token")(classTag[Long]).returns(Future.successful(Option.empty[Long]))
-            cache.remove(anyObject).returns(Future.successful(akka.Done))
+            cache.remove(anyObject).returns(Future.successful(()))
             val idContainer = new CacheIdContainer[Long](cache, StaticTokenGenerator("abcdef"))
             idContainer.remove("abcdef") must equalTo(()).await
             there was no(cache).remove("1:userId") andThen
@@ -112,7 +111,7 @@ class CacheIdContainerSpec(implicit ee: ExecutionEnv) extends Specification with
         "fail to destroy a user's session if there is a cache failure" in {
             val cache = mock[AsyncCacheApi]
             cache.get("abcdef:token")(classTag[Long]).returns(Future.failed(new Exception))
-            cache.remove(anyObject).returns(Future.successful(akka.Done))
+            cache.remove(anyObject).returns(Future.successful(()))
             val idContainer = new CacheIdContainer[Long](cache, StaticTokenGenerator("abcdef"))
             idContainer.remove("abcdef") must throwA[Exception].await
         }
@@ -121,7 +120,7 @@ class CacheIdContainerSpec(implicit ee: ExecutionEnv) extends Specification with
         "prolong a user's session, if their session still exists" in {
             val cache = mock[AsyncCacheApi]
             cache.get("abcdef:token")(classTag[Long]).returns(Future.successful(Option(1L)))
-            cache.set(anyObject, anyObject, anyObject).returns(Future.successful(akka.Done))
+            cache.set(anyObject, anyObject, anyObject).returns(Future.successful(()))
             val idContainer = new CacheIdContainer[Long](cache, StaticTokenGenerator("abcdef"))
             val timeout = 1.hour
             idContainer.prolongTimeout("abcdef", timeout) must equalTo(()).await
@@ -133,7 +132,7 @@ class CacheIdContainerSpec(implicit ee: ExecutionEnv) extends Specification with
         "fail to prolong a user's session if it is already expired or invalid" in {
             val cache = mock[AsyncCacheApi]
             cache.get("abcdef:token")(classTag[Long]).returns(Future.successful(Option.empty[Long]))
-            cache.set(anyObject, anyObject, anyObject).returns(Future.successful(akka.Done))
+            cache.set(anyObject, anyObject, anyObject).returns(Future.successful(()))
             val idContainer = new CacheIdContainer[Long](cache, StaticTokenGenerator("abcdef"))
             val timeout = 1.hour
             idContainer.prolongTimeout("abcdef", timeout) must throwA[Exception].await
@@ -145,7 +144,7 @@ class CacheIdContainerSpec(implicit ee: ExecutionEnv) extends Specification with
         "fail to prolong a user's session if there is a cache failure" in {
             val cache = mock[AsyncCacheApi]
             cache.get("abcdef:token")(classTag[Long]).returns(Future.failed(new Exception))
-            cache.set(anyObject, anyObject, anyObject).returns(Future.successful(akka.Done))
+            cache.set(anyObject, anyObject, anyObject).returns(Future.successful(()))
             val idContainer = new CacheIdContainer[Long](cache, StaticTokenGenerator("abcdef"))
             val timeout = 1.hour
             idContainer.prolongTimeout("abcdef", timeout) must throwA[Exception].await

@@ -4,18 +4,19 @@ import com.jaroop.play.sentry._
 import org.specs2.mock._
 import org.specs2.mutable._
 import play.api.Configuration
+import play.api.http.HeaderNames
 import play.api.libs.crypto.CookieSigner
 import play.api.mvc._
 
 class CookieTokenAccessorSpec extends Specification with Mockito {
 
     val config = mock[Configuration]
-    config.getOptional[String]("sentry.cookie.name").returns(Option("SENTRY_TEST_ID"))
-    config.getOptional[Boolean]("sentry.cookie.secure").returns(Option(false))
-    config.getOptional[Boolean]("sentry.cookie.httpOnly").returns(Option(false))
-    config.getOptional[String]("sentry.cookie.domain").returns(Option("www.test.com"))
-    config.getOptional[String]("sentry.cookie.path").returns(Option("/"))
-    config.getOptional[Int]("sentry.cookie.maxAge").returns(Option(200000))
+    config.getString("sentry.cookie.name").returns(Option("SENTRY_TEST_ID"))
+    config.getBoolean("sentry.cookie.secure").returns(Option(false))
+    config.getBoolean("sentry.cookie.httpOnly").returns(Option(false))
+    config.getString("sentry.cookie.domain").returns(Option("www.test.com"))
+    config.getString("sentry.cookie.path").returns(Option("/"))
+    config.getInt("sentry.cookie.maxAge").returns(Option(200000))
 
     "CookieTokenAccessor" should {
 
@@ -36,7 +37,7 @@ class CookieTokenAccessorSpec extends Specification with Mockito {
                 secure = false,
                 httpOnly = false
             )
-            result.newCookies must contain(exactly(cookie))
+            result.header.headers.get(HeaderNames.SET_COOKIE) must beSome(Cookies.encodeSetCookieHeader(Seq(cookie)))
         }
 
         tag("extract")

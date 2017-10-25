@@ -17,7 +17,6 @@ class AuthenticatedActionBuilderSpec(implicit ee: ExecutionEnv) extends Specific
         "invoke the block when the user is authenticated" in {
             val auth = mock[AsyncAuth[TestEnv]]
             val action = new AuthenticatedActionBuilder[TestEnv](
-                mock[BodyParsers.Default],
                 mock[AuthConfig[TestEnv]],
                 auth
             )
@@ -34,7 +33,6 @@ class AuthenticatedActionBuilderSpec(implicit ee: ExecutionEnv) extends Specific
             val auth = mock[AsyncAuth[TestEnv]]
             val config = mock[AuthConfig[TestEnv]]
             val action = new AuthenticatedActionBuilder[TestEnv](
-                mock[BodyParsers.Default],
                 config,
                 auth
             )
@@ -53,7 +51,6 @@ class AuthenticatedActionBuilderSpec(implicit ee: ExecutionEnv) extends Specific
             val auth = mock[AsyncAuth[TestEnv]]
             val config = mock[AuthConfig[TestEnv]]
             val action = new AuthenticatedActionBuilder[TestEnv](
-                mock[BodyParsers.Default],
                 config,
                 auth
             )
@@ -71,7 +68,6 @@ class AuthenticatedActionBuilderSpec(implicit ee: ExecutionEnv) extends Specific
         "invoke the block when the user is authenticated and authorized" in {
             val auth = mock[AsyncAuth[TestEnv]]
             val action = new AuthenticatedActionBuilder[TestEnv](
-                mock[BodyParsers.Default],
                 mock[AuthConfig[TestEnv]],
                 auth
             )
@@ -87,7 +83,6 @@ class AuthenticatedActionBuilderSpec(implicit ee: ExecutionEnv) extends Specific
         "not invoke the block whent he user is authenticated but not authorized" in {
             val auth = mock[AsyncAuth[TestEnv]]
             val action = new AuthenticatedActionBuilder[TestEnv](
-                mock[BodyParsers.Default],
                 mock[AuthConfig[TestEnv]],
                 auth
             )

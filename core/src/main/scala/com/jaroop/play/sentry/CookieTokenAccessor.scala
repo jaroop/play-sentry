@@ -14,17 +14,17 @@ import play.api.mvc.{ DiscardingCookie, Cookie, Result, RequestHeader }
  */
 class CookieTokenAccessor @Inject() (config: Configuration, val signer: CookieSigner) extends TokenAccessor {
 
-    protected val name: String = config.getOptional[String]("sentry.cookie.name").getOrElse("SENTRY_SESS_ID")
+    protected val name: String = config.getString("sentry.cookie.name").getOrElse("SENTRY_SESS_ID")
 
-    protected val secure: Boolean = config.getOptional[Boolean]("sentry.cookie.secure").getOrElse(false)
+    protected val secure: Boolean = config.getBoolean("sentry.cookie.secure").getOrElse(false)
 
-    protected val httpOnly: Boolean = config.getOptional[Boolean]("sentry.cookie.httpOnly").getOrElse(false)
+    protected val httpOnly: Boolean = config.getBoolean("sentry.cookie.httpOnly").getOrElse(false)
 
-    protected val domain: Option[String] = config.getOptional[String]("sentry.cookie.domain")
+    protected val domain: Option[String] = config.getString("sentry.cookie.domain")
 
-    protected val path: String = config.getOptional[String]("sentry.cookie.path").getOrElse("/")
+    protected val path: String = config.getString("sentry.cookie.path").getOrElse("/")
 
-    protected val maxAge: Option[Int] = config.getOptional[Int]("sentry.cookie.maxAge")
+    protected val maxAge: Option[Int] = config.getInt("sentry.cookie.maxAge")
 
     /** @inheritdoc */
     def put(token: AuthenticityToken)(result: Result)(implicit request: RequestHeader): Result = {

@@ -42,9 +42,8 @@ class OptionalAuthRequest[A, User](request: Request[A], val user: Option[User]) 
  *  @tparam E The environment type of your application.
  */
 class OptionalAuthenticatedActionBuilder[E <: Env] @Inject() (
-    val parser: BodyParsers.Default,
     auth: AsyncAuth[E]
-)(implicit val executionContext: ExecutionContext) extends ActionBuilder[OptionalAuthRequest[?, E#User], AnyContent] {
+)(override implicit val executionContext: ExecutionContext) extends ActionBuilder[OptionalAuthRequest[?, E#User]] {
 
     /**
      *  Attempts to verify if the user is authenticated before invoking the `block` function.
