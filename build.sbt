@@ -18,7 +18,21 @@ lazy val baseSettings = Seq(
   publishArtifact in Test := false,
   pomIncludeRepository := { _: MavenRepository => false },
   fork in Test := true,
-  parallelExecution in Test := false
+  parallelExecution in Test := false,
+  publishTo := Some(
+    if (isSnapshot.value)
+      Opts.resolver.sonatypeSnapshots
+    else
+      Opts.resolver.sonatypeStaging
+  ),
+  licenses := Seq("APL2" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt")),
+  homepage := Some(url("https://github.com/jaroop/play-sentry")),
+  scmInfo := Some(
+    ScmInfo(
+      url("https://github.com/jaroop/play-sentry"),
+      "scm:git@github.com:jaroop/play-sentry.git"
+    )
+  )
 )
 
 def scalacOptionsVersion(scalaVersion: String) = {
