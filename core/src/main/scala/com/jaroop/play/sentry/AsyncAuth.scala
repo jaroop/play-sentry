@@ -1,6 +1,7 @@
 package com.jaroop.play.sentry
 
 import javax.inject.Inject
+import play.api.Environment
 import play.api.mvc._
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -18,7 +19,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class AsyncAuth[E <: Env] @Inject() (
     config: AuthConfig[E],
     idContainer: IdContainer[E#Id],
-    tokenAccessor: TokenAccessor
+    tokenAccessor: TokenAccessor,
+    env: Environment
 ) {
 
     /**
@@ -68,6 +70,11 @@ class AsyncAuth[E <: Env] @Inject() (
         }
     }
 
-    private def extractToken(request: RequestHeader): Option[AuthenticityToken] = tokenAccessor.extract(request)
+    private def extractToken(request: RequestHeader): Option[AuthenticityToken] = {
+        if(env.mode == play.api.Mode.Test)
+            request.headers.get("SENTRY_TEST_TOKEN")
+        else
+            tokenAccessor.extract(request)
+    }
 
 }
