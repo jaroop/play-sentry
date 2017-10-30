@@ -52,7 +52,7 @@ class AuthenticatedActionBuilder[E <: Env] @Inject() (
      *          for the given authority key. If the user is not authorized, then they receive the `Result` as configured
      *          by the available [[AuthConfig]].
      */
-    final def withAuthorization(authority: E#Authority): ActionBuilder[AuthRequest[?, E#User]] = {
+    def withAuthorization(authority: E#Authority): ActionBuilder[AuthRequest[?, E#User]] = {
         new ActionBuilder[AuthRequest[?, E#User]] {
             override protected implicit def executionContext = self.executionContext
             override protected def composeParser[A](bodyParser: BodyParser[A]): BodyParser[A] = self.composeParser(bodyParser)
