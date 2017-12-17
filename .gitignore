@@ -11,3 +11,4 @@ tmp
 .settings/
 .ivy2/
 .classpath
+.DS_Store
