@@ -1,0 +1,38 @@
+version: 2
+jobs:
+  build:
+    docker:
+      # The first image is the primary container where tests are run
+      - image: circleci/openjdk:8-jdk-browsers
+        environment:
+          SBT_VERSION: 0.13.16
+          _JAVA_OPTIONS: "-Xms1024m -Xmx3072m -Xss2m -Duser.country=US"
+          TZ: UTC
+
+    steps:
+      - checkout
+
+      - run:
+          name: Install sbt
+          command: |
+            sudo apt install apt-transport-https
+            echo "deb https://dl.bintray.com/sbt/debian /" | sudo tee -a /etc/apt/sources.list.d/sbt.list
+            sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 2EE0EA64E40A89B84B2DF73499E82A75642AC823
+            sudo apt update
+            sudo apt install sbt
+      - restore_cache:
+          keys:
+            - v1-sbt-{{ checksum "build.sbt" }}
+
+      - run: sbt clean update
+      - run: sbt compile
+      - run: sbt test:compile
+            
+      - run: sbt ++2.11.11 test
+      - run: sbt ++2.12.3 test
+
+      - save_cache:
+          key: v1-sbt-{{ checksum "build.sbt" }}
+          paths:
+            - "~/.ivy2"
+            - "~/.sbt"
