@@ -5,7 +5,7 @@ val playVersion = play.core.PlayVersion.current
 val specsVersion = "3.9.5"
 
 lazy val baseSettings = Seq(
-  version := "1.0.0-SNAPSHOT",
+  version := "1.0.0",
   scalaVersion := "2.12.3",
   crossScalaVersions := Seq("2.11.11", "2.12.3"),
   organization := "com.jaroop",
