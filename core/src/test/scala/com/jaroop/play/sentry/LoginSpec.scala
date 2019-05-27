@@ -13,7 +13,7 @@ class LoginSpec(implicit ee: ExecutionEnv) extends Specification with Mockito {
 
     "Login" should {
 
-        tag("gotoLoginSucceeded")
+        tag("apply")
         "start a new session for a user ID and return a result containing the session token" in {
             implicit val request = mock[RequestHeader]
             val token = "abcdef"
@@ -27,10 +27,10 @@ class LoginSpec(implicit ee: ExecutionEnv) extends Specification with Mockito {
             val tokenAccessor = mock[TokenAccessor]
             tokenAccessor.put(token)(originalResult).returns(expectedResult)
             val login = new Login[TestEnv](config, idContainer, tokenAccessor)
-            login.gotoLoginSucceeded(userId, Future.successful(originalResult)) must equalTo(expectedResult).await
+            login(userId, Future.successful(originalResult)) must equalTo(expectedResult).await
         }
 
-        tag("gotoLoginSucceeded")
+        tag("apply")
         "return an error response when the IdContainer fails to start a new session" in {
             implicit val request = mock[RequestHeader]
             val config = mock[AuthConfig[TestEnv]]
@@ -40,10 +40,10 @@ class LoginSpec(implicit ee: ExecutionEnv) extends Specification with Mockito {
             val tokenAccessor = mock[TokenAccessor]
             tokenAccessor.put(anyObject)(anyObject)(anyObject).returns(Results.Ok)
             val login = new Login[TestEnv](config, idContainer, tokenAccessor)
-            login.gotoLoginSucceeded(1L, Future.successful(Results.Ok)) must throwA[Exception].await
+            login(1L, Future.successful(Results.Ok)) must throwA[Exception].await
         }
 
-        tag("gotoLoginSucceeded")
+        tag("apply")
         "return an error response when the given result fails" in {
             implicit val request = mock[RequestHeader]
             val config = mock[AuthConfig[TestEnv]]
@@ -53,7 +53,7 @@ class LoginSpec(implicit ee: ExecutionEnv) extends Specification with Mockito {
             val tokenAccessor = mock[TokenAccessor]
             tokenAccessor.put(anyObject)(anyObject)(anyObject).returns(Results.Ok)
             val login = new Login[TestEnv](config, idContainer, tokenAccessor)
-            login.gotoLoginSucceeded(1L, Future.failed(new Exception)) must throwA[Exception].await
+            login(1L, Future.failed(new Exception)) must throwA[Exception].await
         }
 
     }

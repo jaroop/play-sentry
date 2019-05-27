@@ -26,12 +26,12 @@ class HomeController @Inject() (
     }
 
     def login(id: Long) = Action.async { implicit request =>
-        us.read(id).map(user => loginService.gotoLoginSucceeded(id))
+        us.read(id).map(user => loginService(id))
             .getOrElse(Future.successful(NotFound("Invalid credentials.")))
     }
 
     def logout() = Action.async { implicit request =>
-        logoutService.gotoLogoutSucceeded(Future.successful(Redirect("/")))
+        logoutService(Future.successful(Redirect("/")))
     }
 
     def priv = authenticatedAction { implicit request =>
