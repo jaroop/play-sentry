@@ -27,6 +27,7 @@ Use the following table to determine what Play Sentry version to use based on wh
 | --------------| ------------------- | ---------- | ---------- |
 | 2.5.x         | 0.9.x               | &#10003;   |            |
 | 2.6.x         | 1.0.x               | &#10003;   | &#10003;   |
+| 2.7.x         | 1.1.x               | &#10003;   | &#10003;   |
 
 
 ## Installation

@@ -7,7 +7,7 @@ import scala.reflect.{ ClassTag, classTag }
 
 class AuthModule extends AbstractModule {
 
-    def configure(): Unit = {
+    override def configure(): Unit = {
         bind(new TypeLiteral[AuthConfig[EnvImpl]]() {}).to(classOf[SimpleAuthConfig])
         bind(classOf[TokenAccessor]).to(classOf[CookieTokenAccessor])
         bind(new TypeLiteral[IdContainer[Long]] {}).to(new TypeLiteral[CacheIdContainer[Long]] {})
