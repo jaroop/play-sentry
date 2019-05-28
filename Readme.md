@@ -27,6 +27,7 @@ Use the following table to determine what Play Sentry version to use based on wh
 | --------------| ------------------- | ---------- | ---------- |
 | 2.5.x         | 0.9.x               | &#10003;   |            |
 | 2.6.x         | 1.0.x               | &#10003;   | &#10003;   |
+| 2.7.x         | 1.1.x               | &#10003;   | &#10003;   |
 
 
 ## Installation
@@ -163,7 +164,7 @@ Once configured, using Play Sentry is as simple as injecting the components you 
 
 ### Logging In
 
-To allow a user to log in, inject the `Login` class into your controller, filling in the type parameter with your own `Env` type. Then, call `gotoLoginSucceeded(userId)` from your action.
+To allow a user to log in, inject the `Login` class into your controller, filling in the type parameter with your own `Env` type. Then, call `Login#apply(userId)` from your action.
 
 ```
 class Application @Inject() (
@@ -182,7 +183,7 @@ class Application @Inject() (
         loginForm.bindFromRequest.fold(
             formWithErrors => Future.successful(views.html.login(formWithErrors, "Invalid email address or password.")),
             credentials => UserService.authenticate(credentials._1, credentials._2).map { user =>
-                login.gotoLoginSucceeded(user.id)
+                login(user.id)
             } getOrElse {
                 // auth failed
             }
@@ -249,15 +250,15 @@ class HomeController @Inject() (
 
 ### Logging Out
 
-Similar to logging in, in order to log a user out of your application, you can inject `Logout` into your controller, then call `gotoLogoutSucceeded` to destroy the logged-in user's session.
+Similar to logging in, in order to log a user out of your application, you can inject `Logout` into your controller, then call `Logout#apply` to destroy the logged-in user's session.
 
 ```
 class Appplication @Inject() (
-    logout: Logout[EnvImpl]
+    sentryLogout: Logout[EnvImpl]
 )(implicit val ec: ExecutionContext) extends InjectedController {
 
     def logout() = Action.async { implicit request =>
-        logout.gotoLogoutSucceeded()
+        sentryLogout()
     }
     
 }

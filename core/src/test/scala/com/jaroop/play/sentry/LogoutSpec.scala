@@ -13,7 +13,7 @@ class LogoutSpec(implicit ee: ExecutionEnv) extends Specification with Mockito {
 
     "Logout" should {
 
-        tag("gotoLogoutSucceeded")
+        tag("apply")
         "destroy a users's session both the id container and token accessor" in {
             implicit val request = mock[RequestHeader]
             val token = "abcdef"
@@ -26,11 +26,11 @@ class LogoutSpec(implicit ee: ExecutionEnv) extends Specification with Mockito {
             tokenAccessor.extract(request).returns(Option(token))
             tokenAccessor.delete(originalResult).returns(expectedResult)
             val logout = new Logout[TestEnv](config, idContainer, tokenAccessor)
-            logout.gotoLogoutSucceeded(Future.successful(originalResult)) must equalTo(expectedResult).await
+            logout(Future.successful(originalResult)) must equalTo(expectedResult).await
             there was one(idContainer).remove(token)
         }
 
-        tag("gotoLogoutSucceeded")
+        tag("apply")
         "do nothing when the user has already been logged out" in {
             implicit val request = mock[RequestHeader]
             val token = "abcdef"
@@ -42,11 +42,11 @@ class LogoutSpec(implicit ee: ExecutionEnv) extends Specification with Mockito {
             tokenAccessor.extract(request).returns(Option.empty[AuthenticityToken])
             tokenAccessor.delete(expectedResult).returns(expectedResult)
             val logout = new Logout[TestEnv](config, idContainer, tokenAccessor)
-            logout.gotoLogoutSucceeded(Future.successful(expectedResult)) must equalTo(expectedResult).await
+            logout(Future.successful(expectedResult)) must equalTo(expectedResult).await
             there was no(idContainer).remove(token)
         }
 
-        tag("gotoLogoutSucceeded")
+        tag("apply")
         "return an error response when the given result fails" in {
             // The user will keep their cookie, but the cache will no longer know they have a session
             implicit val request = mock[RequestHeader]
@@ -58,7 +58,7 @@ class LogoutSpec(implicit ee: ExecutionEnv) extends Specification with Mockito {
             tokenAccessor.extract(request).returns(Option(token))
             tokenAccessor.delete(Results.Ok).returns(Results.Ok)
             val logout = new Logout[TestEnv](config, idContainer, tokenAccessor)
-            logout.gotoLogoutSucceeded(Future.failed(new Exception)) must throwA[Exception].await
+            logout(Future.failed(new Exception)) must throwA[Exception].await
             there was one(idContainer).remove(token)
             there was no(tokenAccessor).delete(Results.Ok)
         }

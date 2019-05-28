@@ -7,7 +7,7 @@ import scala.concurrent.{ Await, ExecutionContext }
 import scala.concurrent.duration._
 
 /**
- *  Provides helpers for testing controllers that user Play Sentry components.
+ *  Provides helpers for testing controllers that use Play Sentry components.
  */
 package object test {
 

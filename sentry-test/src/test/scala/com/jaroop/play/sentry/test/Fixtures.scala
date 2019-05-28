@@ -32,7 +32,7 @@ case object Employee extends Role
 
 class TestAuthModule extends AbstractModule {
 
-    def configure(): Unit = {
+    override def configure(): Unit = {
         bind(new TypeLiteral[AuthConfig[TestEnv]]() {}).to(classOf[TestAuthConfig])
         bind(classOf[TokenAccessor]).to(classOf[CookieTokenAccessor])
         bind(new TypeLiteral[IdContainer[Long]] {}).to(new TypeLiteral[CacheIdContainer[Long]] {})

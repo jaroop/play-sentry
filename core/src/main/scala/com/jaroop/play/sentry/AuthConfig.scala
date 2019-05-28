@@ -33,7 +33,7 @@ trait AuthConfig[E <: Env] {
 
     /**
      *  Determines where to redirect the user by default after successfully logging in. Implement this method to specify
-     *  where to direct a user after `Login#gotoLoginSucceeded` is called.
+     *  where to direct a user after `Login#apply` is called.
      *
      *  @param request The original request used to authenticate.
      *  @return A `Result` typically directing the user to a default URL to be seen after logging in, which will have
@@ -43,7 +43,7 @@ trait AuthConfig[E <: Env] {
 
     /**
      *  Determines where to redirect the user by default after logging out. Implement this method to specify where to direct
-     *  a user after `Logout#gotoLogoutSucceeded` is called.
+     *  a user after `Logout#apply` is called.
      *
      *  @param request The request that initiated the logout action.
      *  @return A `Result` typically directing the user to a default URL to be seen after logging out, which will additionally

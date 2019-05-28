@@ -2,12 +2,12 @@
 val appName = "play-sentry"
 
 val playVersion = play.core.PlayVersion.current
-val specsVersion = "3.9.5"
+val specsVersion = "4.3.4"
 
 lazy val baseSettings = Seq(
-  version := "1.0.0",
-  scalaVersion := "2.12.3",
-  crossScalaVersions := Seq("2.11.11", "2.12.3"),
+  version := "1.1.0-SNAPSHOT",
+  scalaVersion := "2.12.8",
+  crossScalaVersions := Seq("2.11.12", "2.12.8"),
   organization := "com.jaroop",
   resolvers ++= Seq(
     Resolver.typesafeRepo("releases"),
