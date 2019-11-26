@@ -4,7 +4,7 @@ resolvers ++= Seq(
   "Typesafe Snapshots repository" at "http://repo.typesafe.com/typesafe/snapshots/"
 )
 
-addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.7.2")
+addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.7.3")
 
 addSbtPlugin("com.thoughtworks.sbt-api-mappings" % "sbt-api-mappings" % "latest.release")
 

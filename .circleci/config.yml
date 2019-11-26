@@ -27,9 +27,10 @@ jobs:
       - run: sbt clean update
       - run: sbt compile
       - run: sbt test:compile
-            
-      - run: sbt ++2.11.11 test
-      - run: sbt ++2.12.3 test
+
+      - run: sbt ++2.11.12 test
+      - run: sbt ++2.12.10 test
+      - run: sbt ++2.13.1 test
 
       - save_cache:
           key: v1-sbt-{{ checksum "build.sbt" }}
