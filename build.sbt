@@ -2,12 +2,12 @@
 val appName = "play-sentry"
 
 val playVersion = play.core.PlayVersion.current
-val specsVersion = "4.3.4"
+val specsVersion = "4.8.0"
 
 lazy val baseSettings = Seq(
   version := "1.1.0-SNAPSHOT",
-  scalaVersion := "2.12.8",
-  crossScalaVersions := Seq("2.11.12", "2.12.8"),
+  scalaVersion := "2.13.1",
+  crossScalaVersions := Seq("2.11.12", "2.12.10", "2.13.1"),
   organization := "com.jaroop",
   resolvers ++= Seq(
     Resolver.typesafeRepo("releases"),
@@ -43,16 +43,20 @@ def scalacOptionsVersion(scalaVersion: String) = {
     "-explaintypes",                     // Explain type errors in more detail.
     "-feature",                          // Emit warning and location for usages of features that should be imported explicitly.
     "-unchecked",                        // Enable additional warnings where generated code depends on assumptions.
-    "-Ywarn-inaccessible",               // Warn about inaccessible types in method signatures.
-    "-Ywarn-infer-any",                  // Warn when a type argument is inferred to be `Any`.
-    "-Ywarn-nullary-override",           // Warn when non-nullary `def f()' overrides nullary `def f'.
-    "-Ywarn-nullary-unit",               // Warn when nullary methods return Unit.
     "-Ywarn-numeric-widen",              // Warn when numerics are widened.
     "-Ywarn-value-discard"               // Warn when non-Unit expression results are unused.
   ) ++ (CrossVersion.partialVersion(scalaVersion) match {
-    case Some((2, 12)) => Seq(
+    case Some((2, 12)) | Some((2, 13)) => Seq(
       "-Xlint:_,-unused", // Enable lint warnings except for unused imports, parameters, etc.
       "-Ywarn-extra-implicit" // Warn when more than one implicit parameter section is defined.
+    )
+    case _ => Nil
+  }) ++ (CrossVersion.partialVersion(scalaVersion) match {
+    case Some((2, 11)) | Some((2, 12)) => Seq(
+      "-Ywarn-inaccessible",               // Warn about inaccessible types in method signatures.
+      "-Ywarn-infer-any",                  // Warn when a type argument is inferred to be `Any`.
+      "-Ywarn-nullary-override",           // Warn when non-nullary `def f()' overrides nullary `def f'.
+      "-Ywarn-nullary-unit"                // Warn when nullary methods return Unit.
     )
     case _ => Nil
   })
@@ -69,7 +73,7 @@ lazy val core = (project in file("core"))
       "org.specs2" %% "specs2-core" % specsVersion % "test",
       "org.specs2" %% "specs2-mock" % specsVersion % "test"
     ),
-    addCompilerPlugin("org.spire-math" % "kind-projector" % "0.9.4" cross CrossVersion.binary)
+    addCompilerPlugin("org.typelevel" % "kind-projector" % "0.11.0" cross CrossVersion.full)
   )
 
 lazy val sentryTest = (project in file("sentry-test"))
@@ -84,7 +88,7 @@ lazy val sentryTest = (project in file("sentry-test"))
       "org.specs2" %% "specs2-core" % specsVersion % "test",
       "org.specs2" %% "specs2-mock" % specsVersion % "test"
     ),
-    addCompilerPlugin("org.spire-math" % "kind-projector" % "0.9.4" cross CrossVersion.binary)
+    addCompilerPlugin("org.typelevel" % "kind-projector" % "0.11.0" cross CrossVersion.full)
   ).dependsOn(core)
 
 

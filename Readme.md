@@ -23,11 +23,11 @@ Play Sentry is a fork of [play2-auth](https://github.com/t2v/play2-auth), redesi
 
 Use the following table to determine what Play Sentry version to use based on what versions of Scala and Play you are using:
 
-| Play Version  | Play Sentry Version | Scala 2.11 | Scala 2.12 |
-| --------------| ------------------- | ---------- | ---------- |
-| 2.5.x         | 0.9.x               | &#10003;   |            |
-| 2.6.x         | 1.0.x               | &#10003;   | &#10003;   |
-| 2.7.x         | 1.1.x               | &#10003;   | &#10003;   |
+| Play Version  | Play Sentry Version | Scala 2.11 | Scala 2.12 | Scala 2.13 |
+| --------------| ------------------- | ---------- | ---------- | ---------- |
+| 2.5.x         | 0.9.x               | &#10003;   |            |            |
+| 2.6.x         | 1.0.x               | &#10003;   | &#10003;   |            |
+| 2.7.x         | 1.1.x               | &#10003;   | &#10003;   | &#10003;   |
 
 
 ## Installation
@@ -63,10 +63,10 @@ trait EnvImpl extends Env {
 
     /** The type of the user's ID in your application. */
     type Id = Long
-    
+
     /** The type of the user object in your application. */
     type User = Account
-    
+
     /** The authority type (determines access to resources) in your application. */
     type Authority = Role
 }
@@ -160,7 +160,7 @@ Note: If you are using `CacheIdContainer`, you will also need to enable a cache 
 
 ## Usage
 
-Once configured, using Play Sentry is as simple as injecting the components you need into a controller and calling the desired method. 
+Once configured, using Play Sentry is as simple as injecting the components you need into a controller and calling the desired method.
 
 ### Logging In
 
@@ -224,7 +224,7 @@ class HomeController @Inject() (
     def admin = action.withAuthorization(Admin) { implicit request =>
         Ok("If you can read this, you must be an Admin")
     }
-    
+
 }
 ```
 
@@ -244,7 +244,7 @@ class HomeController @Inject() (
             case None => Ok("You are not logged-in.")
         }
     }
-    
+
 }
 ```
 
@@ -260,7 +260,7 @@ class Appplication @Inject() (
     def logout() = Action.async { implicit request =>
         sentryLogout()
     }
-    
+
 }
 ```
 
