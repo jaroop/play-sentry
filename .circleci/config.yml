@@ -4,6 +4,9 @@ jobs:
     docker:
       # The first image is the primary container where tests are run
       - image: circleci/openjdk:8-jdk-browsers
+        auth:
+          username: ${DOCKER_HUB_USERNAME}
+          password: ${DOCKER_HUB_PASSWORD}
         environment:
           SBT_VERSION: 0.13.16
           _JAVA_OPTIONS: "-Xms1024m -Xmx3072m -Xss2m -Duser.country=US"
@@ -37,3 +40,10 @@ jobs:
           paths:
             - "~/.ivy2"
             - "~/.sbt"
+
+workflows:
+  version: 2
+  workflow:
+    jobs:
+      - build:
+          context: jaroop-global
